@@ -596,6 +596,9 @@ public class AppSettings
     /// <inheritdoc cref="WidgetShellSettingsSlice.IconSize"/>
     public double IconSize { get => WidgetShell.IconSize; set => WidgetShell.IconSize = value; }
 
+    /// <inheritdoc cref="WidgetShellSettingsSlice.FileWidgetScrollBarsEnabled"/>
+    public bool FileWidgetScrollBarsEnabled { get => WidgetShell.FileWidgetScrollBarsEnabled; set => WidgetShell.FileWidgetScrollBarsEnabled = value; }
+
     /// <inheritdoc cref="WidgetShellSettingsSlice.TextSize"/>
     public double TextSize { get => WidgetShell.TextSize; set => WidgetShell.TextSize = value; }
 

@@ -31,14 +31,25 @@ internal readonly record struct FileWidgetIconLayout(
         double vertical = NormalizeSpacing(settings.VerticalSpacingScale);
         double nameWidth = NormalizeSpacing(settings.FileNameWidthScale);
         int lines = SettingsService.NormalizeFileNameLineCount(settings.FileNameLineCount);
-        double labelWidth = Math.Max(iconSize, Lerp(iconSize, textSize * 10.5, nameWidth));
+        bool showLabel = lines != SettingsService.HiddenFileNameLineCount;
+        // With the labels hidden there is nothing to reserve width for: the cell
+        // shrinks to the icon plus its own breathing room instead of keeping the
+        // label-sized column (which made every cell look much wider than the
+        // icon it holds).
+        double labelWidth = showLabel
+            ? Math.Max(iconSize, Lerp(iconSize, textSize * 10.5, nameWidth))
+            : iconSize;
+        double tileWidth = showLabel
+            ? Math.Max(iconSize + Lerp(6, 28, horizontal), labelWidth + Lerp(4, 16, horizontal))
+            : iconSize + Lerp(2, 10, horizontal);
+        double labelMaxWidth = showLabel ? labelWidth : 0;
         return new FileWidgetIconLayout(
             iconSize,
             textSize,
-            labelWidth,
+            labelMaxWidth,
             Math.Max(SettingsService.MinFileNameLineCount, lines),
-            lines != SettingsService.HiddenFileNameLineCount,
-            Math.Max(iconSize + Lerp(6, 28, horizontal), labelWidth + Lerp(4, 16, horizontal)),
+            showLabel,
+            tileWidth,
             ResolveTileHeight(iconSize, textSize, lines, vertical, systemTextScaleFactor),
             new Thickness(Lerp(0, 2, horizontal), Lerp(0, 2, vertical), Lerp(0, 2, horizontal), Lerp(0, 2, vertical)),
             new Thickness(Lerp(1, 5, horizontal), Lerp(1, 6, vertical), Lerp(1, 5, horizontal), Lerp(1, 6, vertical)),

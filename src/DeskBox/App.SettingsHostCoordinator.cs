@@ -33,6 +33,13 @@ public partial class App
     // just suspended for its own recording.
     private int _settingsHostGeneration;
 
+    // In-process fallback state (see ShowSettingsViaHost): remembered deep
+    // link plus a "the user asked for settings through the host" flag, both
+    // consumed by OnSettingsHostProcessExited when the host never boots.
+    private string? _pendingInProcessFallbackSection;
+    private string? _pendingInProcessFallbackGlance;
+    private bool _settingsOpenRequestedViaHost;
+
     internal bool IsSettingsHostRunning =>
         _settingsHostProcess is { } host && !host.HasExited;
 
@@ -53,6 +60,12 @@ public partial class App
         {
             return;
         }
+
+        // Deep link for the in-process fallback: when the host dies before it
+        // ever confirms boot, the intent would otherwise be dropped silently.
+        _pendingInProcessFallbackSection = sectionTag;
+        _pendingInProcessFallbackGlance = glanceWidgetId;
+        _settingsOpenRequestedViaHost = true;
 
         if (!IsSettingsHostRunning)
         {
@@ -153,6 +166,7 @@ public partial class App
     private void OnSettingsHostBootReady()
     {
         _settingsHostBootConfirmed = true;
+        _settingsOpenRequestedViaHost = false;
         int flushed = 0;
         while (_pendingHostIntents.Count > 0)
         {
@@ -276,6 +290,21 @@ public partial class App
             {
                 Log("[SettingsHost] Exit of a superseded host era ignored (a newer host was spawned)");
                 return;
+            }
+
+            if (!_settingsHostBootConfirmed && _settingsOpenRequestedViaHost)
+            {
+                // The host never came up (observed: stowed XAML exception with
+                // 0x80070005 inside the second process on an unpackaged debug
+                // build). Rather than swallow the click, open the window in
+                // this process — the in-process factory is already compiled
+                // for the smoke harness and needs no IPC.
+                string? fallbackSection = _pendingInProcessFallbackSection;
+                string? fallbackGlance = _pendingInProcessFallbackGlance;
+                _settingsOpenRequestedViaHost = false;
+                Log("[SettingsHost] Host died before boot; opening settings in-process");
+                UiDispatcherQueue?.TryEnqueue(
+                    () => OpenSettingsInProcess(fallbackSection, fallbackGlance));
             }
 
             if (GlobalHotkeyService is { IsSuspendedForRecording: true } hotkey)

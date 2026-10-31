@@ -217,6 +217,41 @@ public sealed class AppearanceSettingsEditorTests : IDisposable
     }
 
     [Fact]
+    public void IconAreaEdits_WriteThroughWithoutFlaggingTheDensityPresetCustom()
+    {
+        (SettingsService settings, AppearanceSettingsViewModel editor) = CreateEditor(_root);
+        Assert.Equal(LayoutDensityKinds.Standard, editor.LayoutDensity);
+        int valueCommitted = 0;
+        editor.AppearanceValueCommitted += () => valueCommitted++;
+
+        // Hiding the labels writes the shared hidden line count and leaves the
+        // density preset untouched.
+        editor.HideIconLabels = true;
+        Assert.True(editor.HideIconLabels);
+        Assert.Equal(LayoutDensityKinds.HiddenFileNameLineCount, editor.FileNameLineCount);
+        Assert.Equal(LayoutDensityKinds.Standard, editor.LayoutDensity);
+        Assert.Equal(1, valueCommitted);
+        editor.HideIconLabels = false;
+        Assert.False(editor.HideIconLabels);
+        Assert.Equal(LayoutDensityKinds.DefaultFileNameLineCount, editor.FileNameLineCount);
+        Assert.Equal(2, valueCommitted);
+
+        editor.FileWidgetScrollBarsEnabled = true;
+        Assert.True(editor.FileWidgetScrollBarsEnabled);
+        Assert.True(settings.Settings.WidgetShell.FileWidgetScrollBarsEnabled);
+        Assert.Equal(LayoutDensityKinds.Standard, editor.LayoutDensity);
+        Assert.Equal(3, valueCommitted);
+
+        // A later preset application writes the seven preset fields and leaves
+        // the icon-area options alone.
+        editor.LayoutDensity = LayoutDensityKinds.Relaxed;
+        Assert.Equal(LayoutDensityKinds.Relaxed, editor.LayoutDensity);
+        Assert.Equal(36d, settings.Settings.WidgetShell.IconSize);
+        Assert.Equal(LayoutDensityKinds.DefaultFileNameLineCount, editor.FileNameLineCount);
+        Assert.True(editor.FileWidgetScrollBarsEnabled);
+    }
+
+    [Fact]
     public void DensityPreset_WritesSevenFieldsAndRaisesASingleSaveEvent()
     {
         (SettingsService settings, AppearanceSettingsViewModel editor) = CreateEditor(_root);

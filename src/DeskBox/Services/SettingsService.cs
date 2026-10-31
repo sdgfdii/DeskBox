@@ -297,6 +297,8 @@ public sealed class SettingsService
     public const double DefaultIconSize = 30;
     public const double MinIconSize = 24;
     public const double MaxIconSize = 56;
+    // File widget scroll bars stay hidden by default so the icon area stays clean.
+    public const bool DefaultFileWidgetScrollBarsEnabled = false;
     public const double DefaultTextSize = 11.5;
     public const double MinTextSize = QuickCaptureOptionKinds.MinTextSize;
     public const double MaxTextSize = QuickCaptureOptionKinds.MaxTextSize;
@@ -605,6 +607,7 @@ public const int DefaultSearchMaxResults = 100;
         settings.WidgetTitleIconMode = WidgetTitleIconModeColor;
         settings.WidgetOpacity = DefaultWidgetOpacity;
         settings.IconSize = DefaultIconSize;
+        settings.WidgetShell.FileWidgetScrollBarsEnabled = DefaultFileWidgetScrollBarsEnabled;
         settings.TextSize = DefaultTextSize;
         settings.LayoutDensityScale = DefaultLayoutDensityScale;
         settings.LayoutDensity = LayoutDensityStandard;

@@ -62,6 +62,7 @@ public sealed class AppearanceSettingsCoordinator : IAppearanceSettings
                 shell.VerticalSpacingScale,
                 fileWidget.FileNameWidthScale),
             shell.IconSize,
+            shell.FileWidgetScrollBarsEnabled,
             shell.TextSize,
             shell.LayoutDensityScale,
             shell.HorizontalSpacingScale,
@@ -287,6 +288,17 @@ public sealed class AppearanceSettingsCoordinator : IAppearanceSettings
         shell.WidgetMaterialType = normalized;
         // Same order the settings page used: preview the new backdrop, then
         // schedule the debounced save.
+        _settings.RequestAppearancePreview();
+        _settings.SaveDebounced();
+    }
+
+    public void SetFileWidgetScrollBarsEnabled(bool value)
+    {
+        ThrowIfStopped();
+        WidgetShellSettingsSlice shell = _settings.Settings.WidgetShell;
+        if (shell.FileWidgetScrollBarsEnabled == value) return;
+        shell.FileWidgetScrollBarsEnabled = value;
+        // Mirror the other Set* option fields: preview, then debounced save.
         _settings.RequestAppearancePreview();
         _settings.SaveDebounced();
     }

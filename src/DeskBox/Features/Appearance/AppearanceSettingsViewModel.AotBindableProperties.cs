@@ -45,6 +45,8 @@ namespace DeskBox.Features.Appearance;
     nameof(FileNameLineCount),
     nameof(FileNameWidthScale),
     nameof(FileNameWidthValueText),
+    nameof(FileWidgetScrollBarsEnabled),
+    nameof(HideIconLabels),
     nameof(ForegroundColorHex),
     nameof(ForegroundMode),
     nameof(HorizontalSpacingScale),

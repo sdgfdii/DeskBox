@@ -43,6 +43,7 @@ public sealed class WidgetStyleProjectionContractTests
         // Layout + behavior stay device-local; only visual style syncs.
         "defaultWidgetWidth", "defaultWidgetHeight",           // default geometry
         "iconSize", "textSize",                                // content scale
+        "fileWidgetScrollBarsEnabled",                         // scroll-bar policy (behavior)
         "layoutDensity", "layoutDensityScale",                 // density preset/scale
         "horizontalSpacingScale", "verticalSpacingScale",      // spacing scale
         "widgetCapsuleArrangementMode",                        // capsule arrangement

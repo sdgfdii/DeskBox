@@ -240,6 +240,12 @@ public sealed class WidgetShellSettingsSlice
     public double IconSize { get; set; } = 30;
 
     /// <summary>
+    /// When false (default) the file widget icon area never shows its scroll
+    /// bar; wheel and touchpad scrolling keep working.
+    /// </summary>
+    public bool FileWidgetScrollBarsEnabled { get; set; }
+
+    /// <summary>
     /// Label text size used by widgets in both icon and list views.
     /// </summary>
     public double TextSize { get; set; } = 11.5;

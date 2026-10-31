@@ -711,6 +711,30 @@ Text="DeskBox" />
                                     </StackPanel>
                                 </toolkit:SettingsCard>
 
+                                <toolkit:SettingsCard
+                                    HorizontalContentAlignment="Right"
+                                    svc:Localized.DescriptionKey="Settings.HideIconLabels.Description"
+                                    svc:Localized.HeaderKey="Settings.HideIconLabels.Title">
+                                    <toolkit:SettingsCard.HeaderIcon>
+                                        <FontIcon Glyph="&#xE8D2;" />
+                                    </toolkit:SettingsCard.HeaderIcon>
+                                    <ToggleSwitch svc:Localized.AutomationNameKey="Settings.HideIconLabels.Title"
+                                        MinWidth="{StaticResource SettingsControlMinWidth}"
+                                        IsOn="{Binding HideIconLabels, Mode=TwoWay}" />
+                                </toolkit:SettingsCard>
+
+                                <toolkit:SettingsCard
+                                    HorizontalContentAlignment="Right"
+                                    svc:Localized.DescriptionKey="Settings.FileWidgetScrollBars.Description"
+                                    svc:Localized.HeaderKey="Settings.FileWidgetScrollBars.Title">
+                                    <toolkit:SettingsCard.HeaderIcon>
+                                        <FontIcon Glyph="&#xE8A5;" />
+                                    </toolkit:SettingsCard.HeaderIcon>
+                                    <ToggleSwitch svc:Localized.AutomationNameKey="Settings.FileWidgetScrollBars.Title"
+                                        MinWidth="{StaticResource SettingsControlMinWidth}"
+                                        IsOn="{Binding FileWidgetScrollBarsEnabled, Mode=TwoWay}" />
+                                </toolkit:SettingsCard>
+
                                 <toolkit:SettingsCard HorizontalContentAlignment="Right" svc:Localized.DescriptionKey="Settings.HorizontalSpacing.Description" svc:Localized.HeaderKey="Settings.HorizontalSpacing.Title">
                                     <StackPanel VerticalAlignment="Center" Orientation="Horizontal" Spacing="8">
                                         <TextBlock Style="{StaticResource SliderSettingValueTextStyle}" Text="{Binding HorizontalSpacingValueText}" />

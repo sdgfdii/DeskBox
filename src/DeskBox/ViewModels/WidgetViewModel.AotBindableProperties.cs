@@ -28,6 +28,7 @@ namespace DeskBox.ViewModels;
     nameof(ListLabelFontSize),
     nameof(ListViewVisibility),
     nameof(LoadingVisibility),
+    nameof(ScrollBarsEnabled),
     nameof(ShowFileItemPathTooltips),
     nameof(VisibleItems),
     nameof(RenderedItems)

@@ -15,6 +15,7 @@ public partial class WidgetViewModel
         WindowsCompatibilityService.MinSystemTextScaleFactor;
     private double _iconCellWidth;
     private double _iconCellHeight;
+    private bool _scrollBarsEnabled;
 
     /// <summary>
     /// Uniform slot dimensions consumed by the main ItemsWrapGrid. They
@@ -31,6 +32,16 @@ public partial class WidgetViewModel
     {
         get => _iconCellHeight;
         private set => SetProperty(ref _iconCellHeight, value);
+    }
+
+    /// <summary>
+    /// Whether the icon area may show a temporary scroll bar. Mirrored from
+    /// the FileWidgetScrollBarsEnabled setting.
+    /// </summary>
+    public bool ScrollBarsEnabled
+    {
+        get => _scrollBarsEnabled;
+        private set => SetProperty(ref _scrollBarsEnabled, value);
     }
 
     internal void UpdateSystemTextScaleFactor(double textScaleFactor)
@@ -161,6 +172,11 @@ public partial class WidgetViewModel
         IconCellWidth = iconLayout.CellWidth;
         IconCellHeight = iconLayout.CellHeight;
         _iconDecodePixelWidth = iconLayout.DecodePixelWidth;
+
+        // The scroll-bar policy rides the layout pass so appearance previews
+        // refresh the surface live (read through the slice to keep the
+        // facade-access ratchet flat).
+        ScrollBarsEnabled = settings.WidgetShell.FileWidgetScrollBarsEnabled;
 
         double listScale = Lerp(0.68, 0.90, densityT);
         double listItemMarginY = Lerp(0, 2, verticalT);

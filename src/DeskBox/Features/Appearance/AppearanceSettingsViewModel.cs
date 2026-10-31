@@ -197,6 +197,7 @@ public sealed partial class AppearanceSettingsViewModel : ObservableObject
     // Density state.
     private string _layoutDensity = LayoutDensityKinds.Standard;
     private double _iconSize;
+    private bool _fileWidgetScrollBarsEnabled;
     private double _textSize;
     private double _layoutDensityScale;
     private double _horizontalSpacingScale;
@@ -1192,6 +1193,48 @@ public sealed partial class AppearanceSettingsViewModel : ObservableObject
     public string IconSizeValueText =>
         $"{Math.Round(_iconSize):0}px";
 
+    /// <summary>
+    /// Hides or restores the file names under the icon view. Writes the shared
+    /// file-name line count so the file-widget page and this switch never
+    /// disagree.
+    /// </summary>
+    public bool HideIconLabels
+    {
+        get => _fileNameLineCount == LayoutDensityKinds.HiddenFileNameLineCount;
+        set
+        {
+            if (value == HideIconLabels)
+            {
+                return;
+            }
+
+            FileNameLineCount = value
+                ? LayoutDensityKinds.HiddenFileNameLineCount
+                : LayoutDensityKinds.DefaultFileNameLineCount;
+            OnPropertyChanged(nameof(HideIconLabels));
+        }
+    }
+
+    public bool FileWidgetScrollBarsEnabled
+    {
+        get => _fileWidgetScrollBarsEnabled;
+        set
+        {
+            if (!SetProperty(ref _fileWidgetScrollBarsEnabled, value))
+            {
+                return;
+            }
+
+            if (_isSyncingPresentation)
+            {
+                return;
+            }
+
+            _settings.SetFileWidgetScrollBarsEnabled(value);
+            AppearanceValueCommitted?.Invoke();
+        }
+    }
+
     public double HorizontalSpacingScale
     {
         get => _horizontalSpacingScale;
@@ -1248,6 +1291,7 @@ public sealed partial class AppearanceSettingsViewModel : ObservableObject
                 return;
             }
 
+            OnPropertyChanged(nameof(HideIconLabels));
             if (_isSyncingPresentation)
             {
                 return;
@@ -1757,6 +1801,7 @@ public sealed partial class AppearanceSettingsViewModel : ObservableObject
             _settings.ApplyLayoutDensityPreset(preset);
             AppearanceDensitySettings snapshot = _settings.ReadDensity();
             IconSize = snapshot.IconSize;
+            FileWidgetScrollBarsEnabled = snapshot.FileWidgetScrollBarsEnabled;
             TextSize = snapshot.TextSize;
             LayoutDensityScale = snapshot.LayoutDensityScale;
             HorizontalSpacingScale = snapshot.HorizontalSpacingScale;
@@ -1963,6 +2008,7 @@ public sealed partial class AppearanceSettingsViewModel : ObservableObject
 
             LayoutDensity = density.LayoutDensity;
             IconSize = density.IconSize;
+            FileWidgetScrollBarsEnabled = density.FileWidgetScrollBarsEnabled;
             TextSize = density.TextSize;
             LayoutDensityScale = density.LayoutDensityScale;
             HorizontalSpacingScale = density.HorizontalSpacingScale;

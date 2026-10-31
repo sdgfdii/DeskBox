@@ -1,4 +1,4 @@
-﻿// Copyright (c) DeskBox. All rights reserved.
+// Copyright (c) DeskBox. All rights reserved.
 
 using CommunityToolkit.Mvvm.Input;
 using DeskBox.Controls.WidgetContents;
@@ -4518,10 +4518,10 @@ public partial class App : Application
 #endif
     }
 
-#if DESKBOX_AOT_SMOKE_HARNESS
-    // In-process settings window construction — smoke harness only (batch 4:
-    // the retail binary opens settings exclusively in the settings-host
-    // process).
+    // In-process settings window construction. The retail binary normally
+    // opens settings in a second process; this factory stays compiled in every
+    // configuration because the in-process fallback (host died before boot)
+    // and the smoke harness both need it.
     private SettingsWindow CreateSettingsWindow()
     {
         var input = new SettingsWindowFactoryInput(
@@ -4597,7 +4597,40 @@ public partial class App : Application
         ScheduleLightMemoryCleanup(completedHeavyOperation: true);
         ScheduleBackgroundMemoryCleanup("settings-closed");
     }
-#endif
+
+    /// <summary>
+    /// Opens the settings window inside this process. Used by the smoke harness
+    /// and as the fallback when the settings-host process dies before it
+    /// confirms boot: the click must still produce a window instead of nothing.
+    /// </summary>
+    private void OpenSettingsInProcess(string? sectionTag, string? glanceWidgetId)
+    {
+        if (IsShuttingDown)
+        {
+            return;
+        }
+
+        CancelBackgroundMemoryCleanup();
+        SettingsWindow settingsWindow = _settingsWindow ?? CreateSettingsWindow();
+        settingsWindow.ShowWindow();
+        if (!string.IsNullOrEmpty(glanceWidgetId))
+        {
+            settingsWindow.ShowGlanceSection(glanceWidgetId);
+        }
+        else if (!string.IsNullOrEmpty(sectionTag))
+        {
+            settingsWindow.ShowSection(sectionTag);
+        }
+
+        try
+        {
+            settingsWindow.Activate();
+        }
+        catch (Exception ex)
+        {
+            Log($"[SettingsHost] In-process activate failed: {ex.Message}");
+        }
+    }
 
     public void ShowSettings()
     {

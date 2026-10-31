@@ -374,6 +374,7 @@ public readonly record struct AppearanceMaterialSettings(
 public readonly record struct AppearanceDensitySettings(
     string LayoutDensity,
     double IconSize,
+    bool FileWidgetScrollBarsEnabled,
     double TextSize,
     double LayoutDensityScale,
     double HorizontalSpacingScale,
@@ -442,6 +443,9 @@ public interface IAppearanceSettings
     void SetWidgetCornerPreference(string? preference);
     void SetWidgetBorderColorMode(string? mode);
     void SetWidgetBorderStyle(string? style);
+
+    /// <summary>Shows or hides the scroll bars of the file widget icon area.</summary>
+    void SetFileWidgetScrollBarsEnabled(bool value);
 
     void SetFileNameLineCount(int lineCount);
     void MarkLayoutDensityCustom();
